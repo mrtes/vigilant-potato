@@ -15,8 +15,8 @@ public class CameraBehaviour : MonoBehaviour
 
     protected void LateUpdate()
     {
-        var sqDistance = (_cameraTarget.position - transform.position).sqrMagnitude;
-        _camera.orthographicSize = 10f * (sqDistance + 1);
+        var sqDistance = ((Vector2)_cameraTarget.position - (Vector2)transform.position).sqrMagnitude;
+        _camera.orthographicSize = 10f * (sqDistance * Time.deltaTime + 1);
 
         var newPos = Vector3.Lerp(transform.position, _cameraTarget.position, _smoothSpeed * Time.deltaTime);
         newPos.z = transform.position.z;

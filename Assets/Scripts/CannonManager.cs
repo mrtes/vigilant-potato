@@ -1,25 +1,29 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CannonManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject cannonBallPrefab;
-
+    private GameObject _cannonBallPrefab;
     public GameObject prefab
     {
         get
         {
-            return cannonBallPrefab;
+            return _cannonBallPrefab;
         }
         set
         {
-            cannonBallPrefab = value;
-            dummyBall = Instantiate(value, firePoint.position, Quaternion.identity);
-            dummyRigid = dummyBall.GetComponent<Rigidbody>();
+            _cannonBallPrefab = value;
+            _dummyBall = Instantiate(value, firePoint.position, Quaternion.identity);
+            _dummyRigid = _dummyBall.GetComponent<Rigidbody>();
         }
     }
+
     public Transform firePoint;
     public LineRenderer guide;
+
+    public UnityEvent projectileFired = new UnityEvent();
+    public UnityEvent projectileImpacted = new UnityEvent();
 
     private Camera _cam;
     private bool _pressingMouse = false;
@@ -33,72 +37,82 @@ public class CannonManager : MonoBehaviour
     private const int MAXIMAL_MAGNITUDE = 30;
     private const int MINIMAL_MAGNITUDE = 2;
 
+    private GameObject _dummyBall;
+    private Rigidbody _dummyRigid;
 
-    private GameObject dummyBall;
-    private Rigidbody dummyRigid;
+    private bool _canFire = false;
+    public bool CanFire { get => _canFire; set => _canFire = value; }
+    private ProjectileBase _currentProjectile = null;
+    public ProjectileBase CurrentProjectile => _currentProjectile;
 
-
-
-    // Start is called before the first frame update
     void Start()
     {
         _cam = Camera.main;
         guide.positionCount = N_TRAJECTORY_POINTS;
         guide.enabled = false;
 
-        dummyBall = Instantiate(cannonBallPrefab, firePoint.position, Quaternion.identity);
-        dummyRigid = dummyBall.GetComponent<Rigidbody>();
-
+        _dummyBall = Instantiate(_cannonBallPrefab, firePoint.position, Quaternion.identity);
+        _dummyRigid = _dummyBall.GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (_canFire)
         {
-            _pressedStart = Time.time;
-            _pressingMouse = true;
-            guide.enabled = true;
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            _pressingMouse = false;
-            guide.enabled = false;
-            Fire();
-            _pressedStart = 0;
-        }
+            if (Input.GetMouseButtonDown(0))
+            {
+                _pressedStart = Time.time;
+                _pressingMouse = true;
+                guide.enabled = true;
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                _pressingMouse = false;
+                guide.enabled = false;
+                Fire();
+                _pressedStart = 0;
+            }
 
-        if (_pressingMouse)
-        {
-            Debug.Log("pressing mouse");
-            // gedrückte zeit hochzählen 
-            // coordinate transform screen > world
-            Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0;
-            mousePos.x = Mathf.Max(mousePos.x, transform.position.x);
-            mousePos.y = Mathf.Max(mousePos.y, transform.position.y);
+            if (_pressingMouse)
+            {
+                Debug.Log("pressing mouse");
+                // gedrückte zeit hochzählen 
+                // coordinate transform screen > world
+                Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
+                mousePos.z = 0;
+                mousePos.x = Mathf.Max(mousePos.x, transform.position.x);
+                mousePos.y = Mathf.Max(mousePos.y, transform.position.y);
 
-            transform.LookAt(mousePos);
-            var eulers = new Vector3(transform.localEulerAngles.x, 90f, 0f);
-            transform.localEulerAngles = eulers;
+                transform.LookAt(mousePos);
+                var eulers = new Vector3(transform.localEulerAngles.x, 90f, 0f);
+                transform.localEulerAngles = eulers;
 
-            _direction = Vector3.Normalize(mousePos - firePoint.position);
+                _direction = Vector3.Normalize(mousePos - firePoint.position);
 
-            _UpdateLineRenderer();
+                _UpdateLineRenderer();
+            }
         }
     }
 
     private void Fire()
     {
         var velocity = CalculateVelocity();
-        var cannonBall = Instantiate(cannonBallPrefab, firePoint.position, Quaternion.identity);
-        var rb = cannonBall.GetComponent<Rigidbody>();
+        var cannonBallGO = Instantiate(_cannonBallPrefab, firePoint.position, Quaternion.identity);
+        _currentProjectile = cannonBallGO.GetComponent<ProjectileBase>();
+        _currentProjectile.impacted.AddListener(OnProjectileImpact);
+        var rb = cannonBallGO.GetComponent<Rigidbody>();
         rb.AddForce(_direction * velocity, ForceMode.Impulse);
+        projectileFired.Invoke();
+    }
+
+    public void OnProjectileImpact()
+    {
+        projectileImpacted.Invoke();
     }
 
     private void _UpdateLineRenderer()
     {
-        var velocity = CalculateVelocity() / dummyRigid.mass;
+        var velocity = CalculateVelocity() / _dummyRigid.mass;
 
         float g = Physics.gravity.magnitude;
         float angle = Mathf.Atan2(_direction.y, _direction.x);

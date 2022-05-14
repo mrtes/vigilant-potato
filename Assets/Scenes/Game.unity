@@ -145,9 +145,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e839349c3bab16040a6aa005b765a849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cannonBallPrefab: {fileID: 6755308100758431124, guid: 917f7e1c1047fa540a7c68d671217fac, type: 3}
+  _cannonBallPrefab: {fileID: 234951144293870358, guid: 472edfbd587cb504981484992dd448b6, type: 3}
   firePoint: {fileID: 1365903464}
   guide: {fileID: 1020757244}
+  projectileFired:
+    m_PersistentCalls:
+      m_Calls: []
+  projectileImpacted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &154764746
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,7 +183,7 @@ Transform:
   m_Children:
   - {fileID: 134134634}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &425097734
 GameObject:
@@ -203,11 +209,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 425097734}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: 2.8, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 1110128429}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &830730511
 GameObject:
@@ -509,6 +515,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1110128429}
+  - component: {fileID: 1110128430}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -529,9 +536,24 @@ Transform:
   m_Children:
   - {fileID: 830730513}
   - {fileID: 1980768794}
+  - {fileID: 425097737}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1110128430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110128428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6b972af45b5c5f47b20fd16f842ee0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cannon: {fileID: 134134635}
+  _cameraTarget: {fileID: 425097737}
 --- !u!1 &1287184993
 GameObject:
   m_ObjectHideFlags: 0
@@ -737,7 +759,7 @@ Transform:
   m_LocalScale: {x: 100, y: -20, z: 10}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1378550345
 PrefabInstance:
@@ -752,7 +774,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3151814801956712304, guid: 22ccce7217431624abace8552e963046, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3151814801956712304, guid: 22ccce7217431624abace8552e963046, type: 3}
       propertyPath: m_LocalScale.x
@@ -999,7 +1021,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1070,7 +1092,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1980768792
 GameObject:
