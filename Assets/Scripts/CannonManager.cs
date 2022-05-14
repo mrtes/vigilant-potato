@@ -75,9 +75,13 @@ public class CannonManager : MonoBehaviour
             // coordinate transform screen > world
             Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0;
+            mousePos.x = Mathf.Max(mousePos.x, transform.position.x);
+            mousePos.y = Mathf.Max(mousePos.y, transform.position.y);
 
-            // look at
             transform.LookAt(mousePos);
+            var eulers = new Vector3(transform.localEulerAngles.x, 90f, 0f);
+            transform.localEulerAngles = eulers;
+
             _direction = Vector3.Normalize(mousePos - firePoint.position);
 
             _UpdateLineRenderer();
@@ -86,16 +90,15 @@ public class CannonManager : MonoBehaviour
 
     private void Fire()
     {
-        var magnitude = CalculateVelocity();
+        var velocity = CalculateVelocity();
         var cannonBall = Instantiate(cannonBallPrefab, firePoint.position, Quaternion.identity);
         var rb = cannonBall.GetComponent<Rigidbody>();
-        rb.AddForce(_direction * magnitude, ForceMode.Impulse);
+        rb.AddForce(_direction * velocity, ForceMode.Impulse);
     }
 
     private void _UpdateLineRenderer()
     {
         var velocity = CalculateVelocity() / dummyRigid.mass;
-        Debug.Log(velocity);
 
         float g = Physics.gravity.magnitude;
         float angle = Mathf.Atan2(_direction.y, _direction.x);
