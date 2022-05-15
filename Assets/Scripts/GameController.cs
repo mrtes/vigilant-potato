@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,8 @@ public class GameController : MonoBehaviour
     public void StartGame()
     {
         _cannon.CanFire = true;
-        _cameraTarget.SetParent(_cannon.transform, false); // TODO add tween?
+        _cameraTarget.SetParent(_cannon.transform, true);
+        _cameraTarget.DOLocalMove(Vector3.zero, .4f);
     }
 
     public void OnCannonShot()
@@ -27,14 +29,16 @@ public class GameController : MonoBehaviour
         _cannon.CanFire = false;
         if (_cannon.CurrentProjectile != null)
         {
-            _cameraTarget.SetParent(_cannon.CurrentProjectile.transform, false); // TODO add tween?
+            _cameraTarget.SetParent(_cannon.CurrentProjectile.transform, true);
+            _cameraTarget.DOLocalMove(Vector3.zero, .4f);
         }
     }
 
     public void OnProjectileImpact()
     {
         _cannon.CanFire = true;
-        _cameraTarget.SetParent(_cannon.transform, false); // TODO add tween?
+        _cameraTarget.SetParent(_cannon.transform, true);
+        _cameraTarget.DOLocalMove(Vector3.zero, .4f);
     }
 
     public void EndGame()
