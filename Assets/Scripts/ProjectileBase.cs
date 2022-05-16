@@ -8,11 +8,13 @@ public class ProjectileBase : MonoBehaviour
     protected void Start()
     {
         // for testing
-        Invoke(nameof(Impact), 10f);
+        // Invoke(nameof(OnCollisionEnter), 10f);
     }
 
-    protected virtual void Impact()
+    protected virtual void OnCollisionEnter()
     {
+        Debug.Log("Impact");
+        // Timeout??
         impacted.Invoke();
     }
 }

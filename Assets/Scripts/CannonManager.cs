@@ -52,6 +52,7 @@ public class CannonManager : MonoBehaviour
         guide.enabled = false;
 
         _dummyBall = Instantiate(_cannonBallPrefab, firePoint.position, Quaternion.identity);
+        _dummyBall.SetActive(false);
         _dummyRigid = _dummyBall.GetComponent<Rigidbody>();
     }
 
