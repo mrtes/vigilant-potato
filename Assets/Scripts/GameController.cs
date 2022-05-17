@@ -1,6 +1,4 @@
 using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -10,6 +8,12 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private Transform _cameraTarget;
 
+    [SerializeField]
+    private ScorePanel _scorePanel;
+
+    private int _currentShots = 0;
+    private int _currentDestruction = 0;
+
     protected void Start()
     {
         StartGame();
@@ -17,11 +21,24 @@ public class GameController : MonoBehaviour
         _cannon.projectileImpacted.AddListener(OnProjectileImpact);
     }
 
+    protected void UpdateUI()
+    {
+        if (_scorePanel != null)
+        {
+            _scorePanel.UpdateShots(_currentShots);
+        }
+        if (_scorePanel != null)
+        {
+            _scorePanel.UpdateDestruction(_currentDestruction);
+        }
+    }
+
     public void StartGame()
     {
         _cannon.CanFire = true;
         _cameraTarget.SetParent(_cannon.transform, true);
         _cameraTarget.DOLocalMove(Vector3.zero, .4f);
+        UpdateUI();
     }
 
     public void OnCannonShot()
@@ -32,6 +49,9 @@ public class GameController : MonoBehaviour
             _cameraTarget.SetParent(_cannon.CurrentProjectile.transform, true);
             _cameraTarget.DOLocalMove(Vector3.zero, .4f);
         }
+
+        _currentShots++;
+        UpdateUI();
     }
 
     public void OnProjectileImpact()
@@ -39,6 +59,12 @@ public class GameController : MonoBehaviour
         _cannon.CanFire = true;
         _cameraTarget.SetParent(_cannon.transform, true);
         _cameraTarget.DOLocalMove(Vector3.zero, .4f);
+    }
+
+    public void OnDestructionCaused() // TODO attack to destruction of obstacles
+    {
+        _currentDestruction++;
+        UpdateUI();
     }
 
     public void EndGame()
