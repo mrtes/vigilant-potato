@@ -5,18 +5,10 @@ public class CannonManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject _cannonBallPrefab;
-    public GameObject prefab
+    public GameObject CannonBallPrefab
     {
-        get
-        {
-            return _cannonBallPrefab;
-        }
-        set
-        {
-            _cannonBallPrefab = value;
-            _dummyBall = Instantiate(value, firePoint.position, Quaternion.identity);
-            _dummyRigid = _dummyBall.GetComponent<Rigidbody>();
-        }
+        get => _cannonBallPrefab;
+        set => _cannonBallPrefab = value;
     }
 
     public Transform firePoint;
@@ -37,9 +29,6 @@ public class CannonManager : MonoBehaviour
     private const int MAXIMAL_MAGNITUDE = 30;
     private const int MINIMAL_MAGNITUDE = 2;
 
-    private GameObject _dummyBall;
-    private Rigidbody _dummyRigid;
-
     private bool _canFire = false;
     public bool CanFire { get => _canFire; set => _canFire = value; }
     private ProjectileBase _currentProjectile = null;
@@ -50,9 +39,6 @@ public class CannonManager : MonoBehaviour
         _cam = Camera.main;
         guide.positionCount = N_TRAJECTORY_POINTS;
         guide.enabled = false;
-
-        _dummyBall = Instantiate(_cannonBallPrefab, firePoint.position, Quaternion.identity);
-        _dummyRigid = _dummyBall.GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -112,7 +98,7 @@ public class CannonManager : MonoBehaviour
 
     private void _UpdateLineRenderer()
     {
-        var velocity = CalculateVelocity() / _dummyRigid.mass;
+        var velocity = CalculateVelocity() / _cannonBallPrefab.GetComponent<Rigidbody>().mass;
 
         float g = Physics.gravity.magnitude;
         float angle = Mathf.Atan2(_direction.y, _direction.x);
