@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class CannonManager : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class CannonManager : MonoBehaviour
         get => _cannonBallPrefab;
         set => _cannonBallPrefab = value;
     }
+
+    [SerializeField]
+    private bool _UIControlled;
 
     public Transform firePoint;
     public LineRenderer guide;
@@ -45,18 +49,21 @@ public class CannonManager : MonoBehaviour
     {
         if (_canFire)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (!_UIControlled)
             {
-                _pressedStart = Time.time;
-                _pressingMouse = true;
-                guide.enabled = true;
-            }
-            if (Input.GetMouseButtonUp(0))
-            {
-                _pressingMouse = false;
-                guide.enabled = false;
-                Fire();
-                _pressedStart = 0;
+                if (Input.GetMouseButtonDown(0))
+                {
+                    _pressedStart = Time.time;
+                    _pressingMouse = true;
+                    guide.enabled = true;
+                }
+                if (Input.GetMouseButtonUp(0))
+                {
+                    _pressingMouse = false;
+                    guide.enabled = false;
+                    Fire();
+                    _pressedStart = 0;
+                }
             }
 
             if (_pressingMouse)
@@ -77,6 +84,29 @@ public class CannonManager : MonoBehaviour
 
                 _UpdateLineRenderer();
             }
+        }
+    }
+
+    public void OnPointerDown(BaseEventData eventData)
+    {
+        var pointerEventData = (PointerEventData)eventData;
+        if (pointerEventData.button == PointerEventData.InputButton.Left)
+        {
+            _pressedStart = Time.time;
+            _pressingMouse = true;
+            guide.enabled = true;
+        }
+    }
+
+    public void OnPointerUp(BaseEventData eventData)
+    {
+        var pointerEventData = (PointerEventData)eventData;
+        if (pointerEventData.button == PointerEventData.InputButton.Left)
+        {
+            _pressingMouse = false;
+            guide.enabled = false;
+            Fire();
+            _pressedStart = 0;
         }
     }
 
