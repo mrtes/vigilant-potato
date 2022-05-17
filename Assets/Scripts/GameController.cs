@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     private ScorePanel _scorePanel;
+    [SerializeField]
+    private EndScreen _endScreen;
 
     private int _currentShots = 0;
     private int _currentDestruction = 0;
@@ -26,10 +28,11 @@ public class GameController : MonoBehaviour
         if (_scorePanel != null)
         {
             _scorePanel.UpdateShots(_currentShots);
-        }
-        if (_scorePanel != null)
-        {
             _scorePanel.UpdateDestruction(_currentDestruction);
+        }
+        if (_endScreen != null)
+        {
+            _endScreen.UpdateScore(_currentDestruction, _currentShots);
         }
     }
 
@@ -69,6 +72,7 @@ public class GameController : MonoBehaviour
 
     public void EndGame()
     {
-        // show score etc
+        UpdateUI();
+        _endScreen.gameObject.SetActive(true);
     }
 }
