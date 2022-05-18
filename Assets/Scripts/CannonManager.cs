@@ -4,6 +4,8 @@ using UnityEngine.EventSystems;
 
 public class CannonManager : MonoBehaviour
 {
+    public enum CannonState { Idle, Loading, CanFire, Firing }
+
     [SerializeField]
     private GameObject _cannonBallPrefab;
     public GameObject CannonBallPrefab
@@ -12,31 +14,37 @@ public class CannonManager : MonoBehaviour
         set => _cannonBallPrefab = value;
     }
 
-    [SerializeField]
-    private bool _UIControlled;
-
     public Transform firePoint;
     public LineRenderer guide;
 
+    public UnityEvent stateChanged = new UnityEvent();
     public UnityEvent projectileFired = new UnityEvent();
     public UnityEvent projectileImpacted = new UnityEvent();
 
     private Camera _cam;
     private bool _pressingMouse = false;
     private Vector3 _direction;
+    private CannonState _state = CannonState.Idle;
+    public CannonState State
+    {
+        get => _state;
+        set
+        {
+            _state = value;
+            stateChanged.Invoke();
+        }
+    }
 
     private float _pressedStart;
-    private float _pressedEnd;
 
     private const int N_TRAJECTORY_POINTS = 10;
     private const int MAGNITUDE_FACTOR = 5;
     private const int MAXIMAL_MAGNITUDE = 30;
     private const int MINIMAL_MAGNITUDE = 2;
 
-    private bool _canFire = false;
-    public bool CanFire { get => _canFire; set => _canFire = value; }
     private ProjectileBase _currentProjectile = null;
     public ProjectileBase CurrentProjectile => _currentProjectile;
+
 
     void Start()
     {
@@ -47,66 +55,51 @@ public class CannonManager : MonoBehaviour
 
     void Update()
     {
-        if (_canFire)
+        if (State == CannonState.CanFire && _pressingMouse)
         {
-            if (!_UIControlled)
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    _pressedStart = Time.time;
-                    _pressingMouse = true;
-                    guide.enabled = true;
-                }
-                if (Input.GetMouseButtonUp(0))
-                {
-                    _pressingMouse = false;
-                    guide.enabled = false;
-                    Fire();
-                    _pressedStart = 0;
-                }
-            }
+            // gedrückte zeit hochzählen 
+            // coordinate transform screen > world
+            Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0;
+            mousePos.x = Mathf.Max(mousePos.x, transform.position.x);
+            mousePos.y = Mathf.Max(mousePos.y, transform.position.y);
 
-            if (_pressingMouse)
-            {
-                Debug.Log("pressing mouse");
-                // gedrückte zeit hochzählen 
-                // coordinate transform screen > world
-                Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
-                mousePos.z = 0;
-                mousePos.x = Mathf.Max(mousePos.x, transform.position.x);
-                mousePos.y = Mathf.Max(mousePos.y, transform.position.y);
+            transform.LookAt(mousePos);
+            var eulers = new Vector3(transform.localEulerAngles.x, 90f, 0f);
+            transform.localEulerAngles = eulers;
 
-                transform.LookAt(mousePos);
-                var eulers = new Vector3(transform.localEulerAngles.x, 90f, 0f);
-                transform.localEulerAngles = eulers;
+            _direction = Vector3.Normalize(mousePos - firePoint.position);
 
-                _direction = Vector3.Normalize(mousePos - firePoint.position);
-
-                _UpdateLineRenderer();
-            }
+            _UpdateLineRenderer();
         }
     }
 
     public void OnPointerDown(BaseEventData eventData)
     {
-        var pointerEventData = (PointerEventData)eventData;
-        if (pointerEventData.button == PointerEventData.InputButton.Left)
+        if (State == CannonState.CanFire)
         {
-            _pressedStart = Time.time;
-            _pressingMouse = true;
-            guide.enabled = true;
+            var pointerEventData = (PointerEventData)eventData;
+            if (pointerEventData.button == PointerEventData.InputButton.Left)
+            {
+                _pressedStart = Time.time;
+                _pressingMouse = true;
+                guide.enabled = true;
+            }
         }
     }
 
     public void OnPointerUp(BaseEventData eventData)
     {
-        var pointerEventData = (PointerEventData)eventData;
-        if (pointerEventData.button == PointerEventData.InputButton.Left)
+        if (State == CannonState.CanFire)
         {
-            _pressingMouse = false;
-            guide.enabled = false;
-            Fire();
-            _pressedStart = 0;
+            var pointerEventData = (PointerEventData)eventData;
+            if (pointerEventData.button == PointerEventData.InputButton.Left)
+            {
+                _pressingMouse = false;
+                guide.enabled = false;
+                Fire();
+                _pressedStart = 0;
+            }
         }
     }
 
@@ -149,6 +142,18 @@ public class CannonManager : MonoBehaviour
 
     private float CalculateVelocity()
     {
-        return ((Time.time - _pressedStart) * MAGNITUDE_FACTOR);
+        var d = MINIMAL_MAGNITUDE / MAGNITUDE_FACTOR;
+        return Mathf.Clamp((Time.time - _pressedStart + d) * MAGNITUDE_FACTOR, MINIMAL_MAGNITUDE, MAXIMAL_MAGNITUDE);
+    }
+
+    public float CalculateOrthographicCamFactor()
+    {
+        if (!_pressingMouse)
+        {
+            return 1f;
+        }
+
+        float factor = (CalculateVelocity() - MINIMAL_MAGNITUDE) / MAXIMAL_MAGNITUDE;
+        return 1 + factor;
     }
 }

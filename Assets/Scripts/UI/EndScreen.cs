@@ -9,8 +9,8 @@ public class EndScreen : MonoBehaviour
 
     public void UpdateScore(int destruction, int shotsFired)
     {
-        var score = destruction - shotsFired;
-        _scoreText.text = $"Score: {score}\nDestruction: {destruction}\nShots fired: {shotsFired}";
+        var score = destruction - shotsFired + 10;
+        _scoreText.text = $"Score: {score}\nShots fired: {shotsFired}";
     }
 
     public void RestartGame()

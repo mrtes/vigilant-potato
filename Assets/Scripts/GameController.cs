@@ -7,6 +7,8 @@ public class GameController : MonoBehaviour
     private CannonManager _cannon;
     [SerializeField]
     private Transform _cameraTarget;
+    [SerializeField]
+    private Target _target;
 
     [SerializeField]
     private ScorePanel _scorePanel;
@@ -21,6 +23,7 @@ public class GameController : MonoBehaviour
         StartGame();
         _cannon.projectileFired.AddListener(OnCannonShot);
         _cannon.projectileImpacted.AddListener(OnProjectileImpact);
+        _target.targetHit.AddListener(EndGame);
     }
 
     protected void UpdateUI()
@@ -38,7 +41,7 @@ public class GameController : MonoBehaviour
 
     public void StartGame()
     {
-        _cannon.CanFire = true;
+        _cannon.State = CannonManager.CannonState.CanFire;
         _cameraTarget.SetParent(_cannon.transform, true);
         _cameraTarget.DOLocalMove(Vector3.zero, .4f);
         UpdateUI();
@@ -46,7 +49,7 @@ public class GameController : MonoBehaviour
 
     public void OnCannonShot()
     {
-        _cannon.CanFire = false;
+        _cannon.State = CannonManager.CannonState.Firing;
         if (_cannon.CurrentProjectile != null)
         {
             _cameraTarget.SetParent(_cannon.CurrentProjectile.transform, true);
@@ -59,7 +62,7 @@ public class GameController : MonoBehaviour
 
     public void OnProjectileImpact()
     {
-        _cannon.CanFire = true;
+        _cannon.State = CannonManager.CannonState.Loading;
         _cameraTarget.SetParent(_cannon.transform, true);
         _cameraTarget.DOLocalMove(Vector3.zero, .4f);
     }
@@ -72,6 +75,7 @@ public class GameController : MonoBehaviour
 
     public void EndGame()
     {
+        _cannon.State = CannonManager.CannonState.Idle;
         UpdateUI();
         _endScreen.gameObject.SetActive(true);
     }
