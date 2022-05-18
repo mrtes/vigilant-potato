@@ -6,6 +6,13 @@ public class EndScreen : MonoBehaviour
 {
     [SerializeField]
     private TextMeshProUGUI _scoreText;
+    [SerializeField]
+    private AudioSource _audio;
+
+    private void OnEnable()
+    {
+        _audio.Play();
+    }
 
     public void UpdateScore(int destruction, int shotsFired)
     {

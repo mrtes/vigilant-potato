@@ -16,6 +16,8 @@ public class CannonManager : MonoBehaviour
 
     public Transform firePoint;
     public LineRenderer guide;
+    [SerializeField]
+    private AudioSource _audio;
 
     public UnityEvent stateChanged = new UnityEvent();
     public UnityEvent projectileFired = new UnityEvent();
@@ -112,6 +114,7 @@ public class CannonManager : MonoBehaviour
         var rb = cannonBallGO.GetComponent<Rigidbody>();
         rb.AddForce(_direction * velocity, ForceMode.Impulse);
         projectileFired.Invoke();
+        _audio.Play();
     }
 
     public void OnProjectileImpact()

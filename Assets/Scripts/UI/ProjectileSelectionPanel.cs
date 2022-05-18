@@ -10,6 +10,8 @@ public class ProjectileSelectionPanel : MonoBehaviour
     [SerializeField]
     private CannonManager _cannon;
     [SerializeField]
+    private AudioSource _audio;
+    [SerializeField]
     private Transform _selector;
     private Transform[] _buttons;
 
@@ -23,6 +25,7 @@ public class ProjectileSelectionPanel : MonoBehaviour
     {
         _cannon.CannonBallPrefab = _projectilePrefabs[index];
         _cannon.State = CannonManager.CannonState.CanFire;
+        _audio.Play();
         _selector.DOLocalMove(_buttons[index].localPosition, .4f);
     }
 

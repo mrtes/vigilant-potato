@@ -4,6 +4,8 @@ using UnityEngine.Events;
 public class ProjectileBase : MonoBehaviour
 {
     public UnityEvent impacted = new UnityEvent();
+    [SerializeField]
+    private AudioSource _bounceAudio, _explosionAudio;
 
     protected void Start()
     {
@@ -13,6 +15,12 @@ public class ProjectileBase : MonoBehaviour
 
     protected virtual void Impact()
     {
+        _explosionAudio.Play();
         impacted.Invoke();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        _bounceAudio.Play();
     }
 }
