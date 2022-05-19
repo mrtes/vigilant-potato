@@ -62,7 +62,7 @@ public class GameController : MonoBehaviour
 
     public void OnProjectileImpact()
     {
-        _cannon.State = CannonManager.CannonState.Loading;
+        _cannon.State = CannonManager.CannonState.CanFire;
         _cameraTarget.SetParent(_cannon.transform, true);
         _cameraTarget.DOLocalMove(Vector3.zero, .4f);
     }
