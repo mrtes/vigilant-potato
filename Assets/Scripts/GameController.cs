@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameController : MonoBehaviour
 {
@@ -45,6 +46,19 @@ public class GameController : MonoBehaviour
         _cameraTarget.SetParent(_cannon.transform, true);
         _cameraTarget.DOLocalMove(Vector3.zero, .4f);
         UpdateUI();
+    }
+
+    public void OnPointerUp(BaseEventData eventData)
+    {
+        Debug.Log("onpointerup");
+        if (_cannon.State == CannonManager.CannonState.Firing)
+        {
+            var pointerEventData = (PointerEventData)eventData;
+            if (pointerEventData.button == PointerEventData.InputButton.Right)
+            {
+                OnProjectileImpact();
+            }
+        }
     }
 
     public void OnCannonShot()
