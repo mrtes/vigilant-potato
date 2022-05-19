@@ -21,8 +21,8 @@ public class ProjectileBase : MonoBehaviour
         _explosionAudio.Play();
         var explosion = Instantiate(explosionPrefab, gameObject.transform.position, Quaternion.identity);
         GetComponent<MeshRenderer>().enabled = false;
+        yield return new WaitForSeconds(1f);
         GetComponent<SphereCollider>().enabled = false;
-        yield return new WaitForSeconds(1);
         impacted.Invoke();
 
         yield return new WaitForSeconds(10f);
