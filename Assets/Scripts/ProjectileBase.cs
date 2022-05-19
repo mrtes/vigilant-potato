@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -5,18 +6,26 @@ public class ProjectileBase : MonoBehaviour
 {
     public UnityEvent impacted = new UnityEvent();
     [SerializeField]
-    private AudioSource _bounceAudio, _explosionAudio;
+    protected AudioSource _bounceAudio, _explosionAudio;
 
-    protected void Start()
-    {
-        // for testing
-        Invoke(nameof(Impact), 10f);
-    }
+    [SerializeField]
+    protected GameObject explosionPrefab;
 
     protected virtual void Impact()
     {
+        StartCoroutine(WaitBeforeDestroy());
+    }
+
+    private IEnumerator WaitBeforeDestroy(){
         _explosionAudio.Play();
+        var go = Instantiate(explosionPrefab, gameObject.transform.position, Quaternion.identity);
+        GetComponent<MeshRenderer>().enabled = false;
+        yield return new WaitForSeconds(1);
+        go.SetActive(false);
         impacted.Invoke();
+        gameObject.SetActive(false);
+
+
     }
 
     private void OnCollisionEnter(Collision collision)
