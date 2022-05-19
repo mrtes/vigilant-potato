@@ -386,3 +386,4 @@ MonoBehaviour:
       m_Calls: []
   _bounceAudio: {fileID: 4149218205878922686}
   _explosionAudio: {fileID: 8094619252810495300}
+  explosionPrefab: {fileID: 2979544274570440903, guid: 1cdcc6307ab19ed49841bac9906bde07, type: 3}
