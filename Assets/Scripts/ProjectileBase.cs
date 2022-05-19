@@ -16,16 +16,18 @@ public class ProjectileBase : MonoBehaviour
         StartCoroutine(WaitBeforeDestroy());
     }
 
-    private IEnumerator WaitBeforeDestroy(){
+    private IEnumerator WaitBeforeDestroy()
+    {
         _explosionAudio.Play();
-        var go = Instantiate(explosionPrefab, gameObject.transform.position, Quaternion.identity);
+        var explosion = Instantiate(explosionPrefab, gameObject.transform.position, Quaternion.identity);
         GetComponent<MeshRenderer>().enabled = false;
+        GetComponent<SphereCollider>().enabled = false;
         yield return new WaitForSeconds(1);
-        go.SetActive(false);
         impacted.Invoke();
+
+        yield return new WaitForSeconds(10f);
         gameObject.SetActive(false);
-
-
+        explosion.SetActive(false);
     }
 
     private void OnCollisionEnter(Collision collision)

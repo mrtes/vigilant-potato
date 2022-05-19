@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 6440540277636190140}
   - component: {fileID: 4977863682565634862}
   - component: {fileID: -2246271367491240335}
-  - component: {fileID: -6990631720309653257}
+  - component: {fileID: 2885500556916775516}
   m_Layer: 0
   m_Name: Flummy
   m_TagString: KillsTarget
@@ -369,7 +369,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 8
   m_CollisionDetection: 0
---- !u!114 &-6990631720309653257
+--- !u!114 &2885500556916775516
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6755308100758431124}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7684b84b02e2f544398c4ea473591eb0, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b686f2dd8ce38f428ab3744aa922a53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   impacted:
@@ -386,4 +386,5 @@ MonoBehaviour:
       m_Calls: []
   _bounceAudio: {fileID: 4149218205878922686}
   _explosionAudio: {fileID: 8094619252810495300}
-  explosionPrefab: {fileID: 2979544274570440903, guid: 1cdcc6307ab19ed49841bac9906bde07, type: 3}
+  explosionPrefab: {fileID: 2979544274570440903, guid: fcd3f523a56c5c944a118a1904f3f6e1, type: 3}
+  collisionEndurance: 3
